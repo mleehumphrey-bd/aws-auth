@@ -34,14 +34,11 @@ else
   unset AWS_SESSION_TOKEN
 
   token_code=$(ykman oath code | perl -pe "s/.* +(\d+)$/\1/g;")
-  echo "token code: $token_code"
-
   output=$(aws sts get-session-token --serial-number $mfa_serial_number --token-code $token_code)
-  echo "output: $output"
 
-  aws_access_key_id=$(echo $output | perl -pe "s/.*AccessKeyId\": \"([^\"]+)\".*/\1/g;")
-  aws_secret_access_key=$(echo $output | perl -pe "s/.*SecretAccessKey\": \"([^\"]+)\".*/\1/g;")
-  aws_session_token=$(echo $output | perl -pe "s/.*SessionToken\": \"([^\"]+)\".*/\1/g;")
+  aws_access_key_id=$(echo $output | jq -r '.Credentials.AccessKeyId')
+  aws_secret_access_key=$(echo $output | jq -r '.Credentials.SecretAccessKey')
+  aws_session_token=$(echo $output | jq -r '.Credentials.SessionToken')
 
   export AWS_ACCESS_KEY_ID=$aws_access_key_id
   export AWS_SECRET_ACCESS_KEY=$aws_secret_access_key
