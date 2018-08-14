@@ -2,7 +2,7 @@
 bash script for aws cli authentication using an mfa token
 
 # REQUIREMENTS
-  oauth totp code generator (e.g https://developers.yubico.com/yubikey-manager/)
+  oauth totp code generator (e.g https://developers.yubico.com/yubikey-manager/)  
   jq (https://stedolan.github.io/jq/)
 
 # USAGE
