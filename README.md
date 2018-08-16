@@ -2,7 +2,7 @@
 bash script for aws cli authentication using an mfa token
 
 # REQUIREMENTS
-  jq (https://stedolan.github.io/jq/)
+  [jq](https://stedolan.github.io/jq/)
 
 # USAGE
 
