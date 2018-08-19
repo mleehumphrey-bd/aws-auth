@@ -1,9 +1,6 @@
 # aws-auth
 bash script for aws cli authentication using an mfa token. source the script instead of just executing it so it preserves the newly set environment.
 
-# REQUIREMENTS
-  [jq](https://stedolan.github.io/jq/)
-
 # USAGE
 
 ```
@@ -20,5 +17,5 @@ OPTIONS:
 
 you can use a command line token generator (e.g. [YubiKey Manager CLI](https://developers.yubico.com/yubikey-manager/)) and run:  
 ```
- . ./aws-auth.sh -m arn:aws:iam::12345678:mfa/reuel -t `ykman oath code | perl -pe "s/.* +(\d+)$/\1/g;"`
+ . ./aws-auth.sh -m arn:aws:iam::12345678:mfa/reuel -t `ykman oath code | perl -pe "s/.* //g;"`
 ```
