@@ -40,7 +40,7 @@ else
   unset AWS_SECRET_ACCESS_KEY
   unset AWS_SESSION_TOKEN
 
-  output=($(aws sts get-session-token --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' --output text --serial-number $MFA_ARN --token-code $token_code))
+  output=($(aws sts get-session-token --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' --output text --serial-number $mfa_serial_number --token-code $token_code))
   export AWS_ACCESS_KEY_ID="${output[0]}" AWS_SECRET_ACCESS_KEY="${output[1]}" AWS_SESSION_TOKEN="${output[2]}"
 
   echo "token_code: $token_code"
