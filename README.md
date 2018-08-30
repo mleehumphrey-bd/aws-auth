@@ -17,5 +17,5 @@ OPTIONS:
 
 you can use a command line token generator (e.g. [YubiKey Manager CLI](https://developers.yubico.com/yubikey-manager/)) and run:  
 ```
- . ./aws-auth.sh -m arn:aws:iam::12345678:mfa/reuel -t `ykman oath code -s amazon`
+. ./aws-auth.sh -m arn:aws:iam::12345678:mfa/reuel -t `ykman oath code -s amazon`
 ```
