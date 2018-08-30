@@ -32,7 +32,11 @@ then
   usage
   exit 1
 else
-  output=($(aws sts get-session-token --duration 129600 --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' --output text --serial-number $mfa_serial_number --token-code $token_code))
+  unset AWS_ACCESS_KEY_ID
+  unset AWS_SECRET_ACCESS_KEY
+  unset AWS_SESSION_TOKEN
+
+  output=($(aws --profile mfa sts get-session-token --duration 129600 --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' --output text --serial-number $mfa_serial_number --token-code $token_code))
   AWS_ACCESS_KEY_ID="${output[0]}"
   AWS_SECRET_ACCESS_KEY="${output[1]}"
   AWS_SESSION_TOKEN="${output[2]}"
