@@ -32,18 +32,14 @@ then
   usage
   exit 1
 else
-  unset AWS_ACCESS_KEY_ID
-  unset AWS_SECRET_ACCESS_KEY
-  unset AWS_SESSION_TOKEN
-
-  output=($(aws --profile mfa sts get-session-token --duration 129600 --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' --output text --serial-number $mfa_serial_number --token-code $token_code))
+  output=($(aws sts get-session-token --duration 129600 --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' --output text --serial-number $mfa_serial_number --token-code $token_code))
   AWS_ACCESS_KEY_ID="${output[0]}"
   AWS_SECRET_ACCESS_KEY="${output[1]}"
   AWS_SESSION_TOKEN="${output[2]}"
 
-  aws --profile mfa configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
-  aws --profile mfa configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
-  aws --profile mfa configure set aws_session_token "$AWS_SESSION_TOKEN"
+  aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
+  aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
+  aws configure set aws_session_token "$AWS_SESSION_TOKEN"
 
   echo "token_code: $token_code"
   echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
