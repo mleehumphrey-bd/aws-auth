@@ -33,18 +33,46 @@ shift "$((OPTIND-1))"
 
 if [ ! "$mfa_serial_number" ] || [ ! "$token_code" ]
 then
+  # require mfa arn and token code
   usage
   return 1
 else
-  unset AWS_ACCESS_KEY_ID
-  unset AWS_SECRET_ACCESS_KEY
-  unset AWS_SESSION_TOKEN
+  if [ -z "$AWS_EXPIRATION" ]
+  then
+    # haven't authorized
+    do_auth=true
+  else
+    current_date=($(date -u +"%Y-%m-%dT%H:%M:%SZ"))
 
-  output=($(aws sts get-session-token --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' --output text --serial-number $mfa_serial_number --token-code $token_code))
-  export AWS_ACCESS_KEY_ID="${output[0]}" AWS_SECRET_ACCESS_KEY="${output[1]}" AWS_SESSION_TOKEN="${output[2]}"
+    if [[ "$current_date" < "$AWS_EXPIRATION" ]]
+    then
+      # valid session token
+      do_auth=false
+    else
+      # expired session token
+      do_auth=true
+    fi
+  fi
 
-  echo "token_code: $token_code"
-  echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
-  echo "AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY"
-  echo "AWS_SESSION_TOKEN: $AWS_SESSION_TOKEN"
+  if [ "$do_auth" = true ]
+  then
+    echo -e "session token expired. retrieving temporary credentials...\n"
+
+    # unset and set authorization temporary credentials via environment variables
+    unset AWS_ACCESS_KEY_ID
+    unset AWS_SECRET_ACCESS_KEY
+    unset AWS_SESSION_TOKEN
+    unset AWS_EXPIRATION
+
+    output=($(aws sts get-session-token --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken,Expiration]' --output text --serial-number $mfa_serial_number --token-code $token_code --duration-seconds 129600))
+    export AWS_ACCESS_KEY_ID="${output[0]}" AWS_SECRET_ACCESS_KEY="${output[1]}" AWS_SESSION_TOKEN="${output[2]}" AWS_EXPIRATION="${output[3]}"
+
+    # echo "token_code: $token_code"
+    echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
+    echo "AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY"
+    echo "AWS_SESSION_TOKEN: $AWS_SESSION_TOKEN"
+    echo "AWS_EXPIRATION: $AWS_EXPIRATION"
+  else
+    echo -e "session token valid. expiration date: $AWS_EXPIRATION\n"
+  fi
 fi
