@@ -6,7 +6,7 @@ bash script for aws cli authentication using an mfa token. source the script ins
 ```
   . ./aws-auth.sh {OPTIONS}
   
-  Example:  . ./aws-auth -m arn:aws:iam::12345678:mfa/reuel -t 884123
+  Example:  . ./aws-auth -m arn:aws:iam::12345678:mfa/reuel -t TOKEN
 
 OPTIONS:
 
