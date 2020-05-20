@@ -65,7 +65,7 @@ else
     unset AWS_EXPIRATION
 
     output=($(aws sts get-session-token --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken,Expiration]' --output text --serial-number $mfa_serial_number --token-code $token_code --duration-seconds 129600))
-    export AWS_ACCESS_KEY_ID="${output[0]}" AWS_SECRET_ACCESS_KEY="${output[1]}" AWS_SESSION_TOKEN="${output[2]}" AWS_EXPIRATION="${output[3]}"
+    export AWS_ACCESS_KEY_ID="${output[1]}" AWS_SECRET_ACCESS_KEY="${output[2]}" AWS_SESSION_TOKEN="${output[3]}" AWS_EXPIRATION="${output[4]}"
 
     # echo "token_code: $token_code"
     echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
