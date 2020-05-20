@@ -13,7 +13,7 @@ options:
    return
 }
 
-while getopts "m:t:" OPTION
+while getopts ":m:t:p:" OPTION
 do
   case $OPTION in
     m)
@@ -21,6 +21,9 @@ do
       ;;
     t)
       token_code=$OPTARG
+      ;;
+    p)
+      aws_profile=$OPTARG
       ;;
     *)
       usage;
@@ -31,7 +34,7 @@ done
 
 shift "$((OPTIND-1))"
 
-if [ ! "$mfa_serial_number" ] || [ ! "$token_code" ]
+if [ ! "$mfa_serial_number" ] || [ ! "$token_code" ] || [ ! "$aws_profile" ]
 then
   # require mfa arn and token code
   usage
@@ -64,7 +67,7 @@ else
     unset AWS_SESSION_TOKEN
     unset AWS_EXPIRATION
 
-    output=($(aws sts get-session-token --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken,Expiration]' --output text --serial-number $mfa_serial_number --token-code $token_code --duration-seconds 129600))
+    output=($(aws sts get-session-token --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken,Expiration]' --output text --serial-number $mfa_serial_number --token-code $token_code --profile $aws_profile --duration-seconds 9600))
     export AWS_ACCESS_KEY_ID="${output[1]}" AWS_SECRET_ACCESS_KEY="${output[2]}" AWS_SESSION_TOKEN="${output[3]}" AWS_EXPIRATION="${output[4]}"
 
     # echo "token_code: $token_code"
